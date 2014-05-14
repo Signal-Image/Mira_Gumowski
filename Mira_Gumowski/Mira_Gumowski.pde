@@ -10,12 +10,12 @@ boolean displayInfo = true;
 boolean randomizer = false;
 boolean random0 = false;
 boolean cls = true;
+int colorMode = 0;
 float zoom = 10;
 
 void setup() {
-  size(screen.width, screen.height);
+  size(600, 600);
   background(255);
-  colorMode(HSB);
   noStroke();
   smooth();
 
@@ -25,6 +25,30 @@ void setup() {
   /* Gestion des polices */
   PFont myFont = createFont(PFont.list()[2], 10);
   textFont(myFont);
+}
+
+void fillColor(float x, float y) {
+  if (colorMode == 0)
+    colorMode(HSB);
+  else
+    colorMode(RGB);
+
+  switch(colorMode) {
+  case 0:
+    fill(map(atan2(x,y),-PI,PI,0,255),255,255,100);
+    break;
+  case 1:
+    fill(255,0,0,100); /* red */
+    break;
+  case 2:
+    fill(0,255,0,100); /* green */
+    break;
+  case 3:
+    fill(0,0,255,100); /* blue */
+    break;
+  default:
+    fill(0,0,0,100);   /* black */
+  }
 }
 
 void draw() {
@@ -68,7 +92,11 @@ void draw() {
     text("NbPoint = " + NbPoint, 10, 30);
     text("x0 = " + x0, 110,10);
     text("y0 = " + y0, 110,20);
-    text("Appuyer sur I pour masquer les informations", width-200, 10);
+    text("Appuyer sur I pour masquer les informations", width-300, 10);
+    text("R et T pour activer la randomisation", width-300, 30);
+    text("B et N pour modifier le nombre de points", width-300, 40);
+    text("C pour changer le mode colorimétrique", width-300, 50);
+    text("ESPACE pour enregistrer l'image", width-300, 60);
   }
 
   translate(width/2,height/2);
@@ -76,7 +104,7 @@ void draw() {
     x = f+b*ya;
     f = a*x+c*x*x/(1+x*x);
     y = f-xa;
-    fill(map(atan2(x,y),-PI,PI,0,255),255,255,100);
+    fillColor(x,y);
     ellipse(zoom*x,zoom*y,3,3);
     if(randomizer) {
       x += random(-.1,.1);
@@ -112,5 +140,7 @@ void keyPressed() {
     random0 = !random0;
   if(key == 'k' || key == 'K')
     cls = !cls;
+  if(key == 'c' || key == 'C')
+    colorMode = (colorMode + 1) % 5;
 }
 
